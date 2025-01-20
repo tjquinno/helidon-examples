@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
 
-    Copyright (c) 2017, 2024 Oracle and/or its affiliates.
+    Copyright (c) 2025 Oracle and/or its affiliates.
 
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
@@ -16,30 +16,30 @@
     limitations under the License.
 
 -->
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
 
-<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://maven.apache.org/POM/4.0.0"
-        xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
-        <groupId>io.helidon.examples</groupId>
-        <artifactId>helidon-examples-project</artifactId>
+        <groupId>io.helidon.examples.integrations</groupId>
+        <artifactId>helidon-examples-integrations-project</artifactId>
         <version>1.0.0-SNAPSHOT</version>
+        <relativePath>../pom.xml</relativePath>
     </parent>
-    <groupId>io.helidon.examples.integrations</groupId>
-    <artifactId>helidon-examples-integrations-project</artifactId>
+
+    <groupId>io.helidon.examples.integrations.langchain4j</groupId>
+    <artifactId>helidon-examples-langchain4j-project</artifactId>
     <version>1.0.0-SNAPSHOT</version>
-    <name>Helidon Examples Integrations</name>
+    <name>Helidon Examples Integration Langchain4j</name>
+
     <packaging>pom</packaging>
 
     <modules>
-        <module>cdi</module>
-        <module>micronaut</module>
-        <module>neo4j</module>
-        <module>micrometer</module>
-        <module>oci</module>
-        <module>vault</module>
-        <module>microstream</module>
-        <module>lanchain4j</module>
+        <module>se</module>
+        <module>mp</module>
     </modules>
+
+    <description>
+        Basic illustrations of Langchain4j integration in Helidon
+    </description>
 
 </project>
