@@ -34,8 +34,8 @@
     <packaging>pom</packaging>
 
     <modules>
-        <module>se</module>
-        <module>mp</module>
+        <module>car-booking-se</module>
+        <module>car-booking-mp</module>
     </modules>
 
     <description>
