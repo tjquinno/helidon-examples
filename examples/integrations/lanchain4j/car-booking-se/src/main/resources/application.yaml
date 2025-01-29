@@ -30,6 +30,7 @@ langchain4j:
       enabled: true
       max-results: 3
       min-score: 0.6
+      embedding-model: "@default"
 
 app:
   docs-for-rag:

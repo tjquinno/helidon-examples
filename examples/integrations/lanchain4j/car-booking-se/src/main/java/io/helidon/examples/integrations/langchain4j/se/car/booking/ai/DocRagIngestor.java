@@ -18,7 +18,7 @@ package io.helidon.examples.integrations.langchain4j.se.car.booking.ai;
 
 import java.nio.file.Path;
 import java.util.List;
-import java.util.logging.Logger;
+import java.util.function.Supplier;
 
 import io.helidon.common.config.Config;
 import io.helidon.service.registry.Service;
@@ -30,27 +30,34 @@ import dev.langchain4j.data.document.splitter.DocumentSplitters;
 import dev.langchain4j.data.segment.TextSegment;
 import dev.langchain4j.model.embedding.EmbeddingModel;
 import dev.langchain4j.model.embedding.onnx.allminilml6v2.AllMiniLmL6V2EmbeddingModel;
+import dev.langchain4j.store.embedding.EmbeddingStore;
 import dev.langchain4j.store.embedding.EmbeddingStoreIngestor;
 import dev.langchain4j.store.embedding.inmemory.InMemoryEmbeddingStore;
 
 @Service.Singleton
 public class DocRagIngestor {
     private static final String CONFIG_KEY = "app.docs-for-rag.dir";
-    private static final Logger LOGGER = Logger.getLogger(DocRagIngestor.class.getName());
+    private static final System.Logger LOGGER = System.getLogger(DocRagIngestor.class.getName());
 
-    private final EmbeddingModel embeddingModel = new AllMiniLmL6V2EmbeddingModel();
-    private final InMemoryEmbeddingStore<TextSegment> embeddingStore = new InMemoryEmbeddingStore<>();
+    private final EmbeddingModel embeddingModel;
+    private final EmbeddingStore<TextSegment> embeddingStore;
 
-    private final Path docs;
+    private final Path docsPath;
 
     @Service.Inject
-    DocRagIngestor(Config config) {
-        this.docs = config.get(CONFIG_KEY)
+    DocRagIngestor(EmbeddingModel embeddingModel, EmbeddingStore<TextSegment> embeddingStore, Config config) {
+        this.embeddingModel = embeddingModel;
+        this.embeddingStore = embeddingStore;
+
+        this.docsPath = config.get(CONFIG_KEY)
                 .as(Path.class)
                 .orElseThrow(() -> new IllegalStateException(CONFIG_KEY + " is a required configuration key for RAG"));
     }
 
     public void ingest() {
+        LOGGER.log(System.Logger.Level.INFO, "DEMO ingesting documents from: {0}",
+                   docsPath.toAbsolutePath().normalize());
+
         long start = System.currentTimeMillis();
 
         EmbeddingStoreIngestor ingestor = EmbeddingStoreIngestor.builder()
@@ -62,11 +69,34 @@ public class DocRagIngestor {
         List<Document> docs = loadDocs();
         ingestor.ingest(docs);
 
-        LOGGER.info(String.format("DEMO %d documents ingested in %d msec", docs.size(),
-                                  System.currentTimeMillis() - start));
+        LOGGER.log(System.Logger.Level.INFO, "DEMO {0} documents ingested in {1} msec",
+                   docs.size(),
+                   System.currentTimeMillis() - start);
     }
 
     private List<Document> loadDocs() {
-        return FileSystemDocumentLoader.loadDocuments(docs, new TextDocumentParser());
+        return FileSystemDocumentLoader.loadDocuments(docsPath, new TextDocumentParser());
+    }
+
+    /**
+     * This is the embedding model we want to use.
+     */
+    @Service.Singleton
+    static class EmbeddingModelFactory implements Supplier<EmbeddingModel> {
+        @Override
+        public EmbeddingModel get() {
+            return new AllMiniLmL6V2EmbeddingModel();
+        }
+    }
+
+    /**
+     * And the embedding store we want to use.
+     */
+    @Service.Singleton
+    static class EmbeddingStoreFactory implements Supplier<EmbeddingStore<TextSegment>> {
+        @Override
+        public EmbeddingStore<TextSegment> get() {
+            return new InMemoryEmbeddingStore<>();
+        }
     }
 }
