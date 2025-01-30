@@ -30,7 +30,8 @@ langchain4j:
       enabled: true
       max-results: 3
       min-score: 0.6
-      embedding-model: "@default"
+      # the embedding model must be produced by the application
+      embedding-model: "all-mini-lm-l6-v2"
 
 app:
   docs-for-rag:

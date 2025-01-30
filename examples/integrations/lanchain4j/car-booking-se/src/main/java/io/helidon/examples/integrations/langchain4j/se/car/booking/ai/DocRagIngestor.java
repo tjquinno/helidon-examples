@@ -32,7 +32,6 @@ import dev.langchain4j.model.embedding.EmbeddingModel;
 import dev.langchain4j.model.embedding.onnx.allminilml6v2.AllMiniLmL6V2EmbeddingModel;
 import dev.langchain4j.store.embedding.EmbeddingStore;
 import dev.langchain4j.store.embedding.EmbeddingStoreIngestor;
-import dev.langchain4j.store.embedding.inmemory.InMemoryEmbeddingStore;
 
 @Service.Singleton
 public class DocRagIngestor {
@@ -81,22 +80,12 @@ public class DocRagIngestor {
     /**
      * This is the embedding model we want to use.
      */
+    @Service.Named("all-mini-lm-l6-v2")
     @Service.Singleton
     static class EmbeddingModelFactory implements Supplier<EmbeddingModel> {
         @Override
         public EmbeddingModel get() {
             return new AllMiniLmL6V2EmbeddingModel();
-        }
-    }
-
-    /**
-     * And the embedding store we want to use.
-     */
-    @Service.Singleton
-    static class EmbeddingStoreFactory implements Supplier<EmbeddingStore<TextSegment>> {
-        @Override
-        public EmbeddingStore<TextSegment> get() {
-            return new InMemoryEmbeddingStore<>();
         }
     }
 }

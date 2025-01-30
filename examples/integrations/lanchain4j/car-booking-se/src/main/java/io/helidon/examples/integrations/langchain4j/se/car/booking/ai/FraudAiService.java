@@ -24,7 +24,7 @@ import dev.langchain4j.service.UserMessage;
 import dev.langchain4j.service.V;
 
 @Ai.Service
-@Ai.ChatMemory("fraudChatMemory")
+@Ai.ChatMemoryWindow(5)
 public interface FraudAiService {
 
     @SystemMessage("""

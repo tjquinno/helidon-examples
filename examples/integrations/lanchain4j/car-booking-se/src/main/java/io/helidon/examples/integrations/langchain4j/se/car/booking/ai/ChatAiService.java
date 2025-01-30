@@ -21,7 +21,7 @@ import io.helidon.integrations.langchain4j.Ai;
 import dev.langchain4j.service.SystemMessage;
 
 @Ai.Service
-@Ai.ChatMemory("bookingChatMemory")
+@Ai.ChatMemoryWindow(10)
 public interface ChatAiService {
 
     @SystemMessage("""
