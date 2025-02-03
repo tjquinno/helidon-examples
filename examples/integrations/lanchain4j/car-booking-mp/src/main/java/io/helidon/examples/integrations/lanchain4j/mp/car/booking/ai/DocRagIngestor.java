@@ -18,7 +18,6 @@ package io.helidon.examples.integrations.lanchain4j.mp.car.booking.ai;
 
 import java.nio.file.Path;
 import java.util.List;
-import java.util.logging.Logger;
 
 import dev.langchain4j.data.document.Document;
 import dev.langchain4j.data.document.loader.FileSystemDocumentLoader;
@@ -27,12 +26,14 @@ import dev.langchain4j.data.document.splitter.DocumentSplitters;
 import dev.langchain4j.data.segment.TextSegment;
 import dev.langchain4j.model.embedding.EmbeddingModel;
 import dev.langchain4j.model.embedding.onnx.allminilml6v2.AllMiniLmL6V2EmbeddingModel;
+import dev.langchain4j.store.embedding.EmbeddingStore;
 import dev.langchain4j.store.embedding.EmbeddingStoreIngestor;
-import dev.langchain4j.store.embedding.inmemory.InMemoryEmbeddingStore;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.enterprise.context.Initialized;
 import jakarta.enterprise.event.Observes;
+import jakarta.enterprise.inject.Produces;
 import jakarta.inject.Inject;
+import jakarta.inject.Named;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 
 /*
@@ -40,20 +41,23 @@ This type is MP specific, as it does not need any of the SE features.
  */
 @ApplicationScoped
 public class DocRagIngestor {
-
-    private static final Logger LOGGER = Logger.getLogger(DocRagIngestor.class.getName());
-
-    private final EmbeddingModel embeddingModel = new AllMiniLmL6V2EmbeddingModel();
-    private final InMemoryEmbeddingStore<TextSegment> embeddingStore = new InMemoryEmbeddingStore<>();
-
-    private final Path docs;
+    private static final String EMBEDDING_MODEL_NAME = "all-mini-lm-l6-v2";
+    private static final System.Logger LOGGER = System.getLogger(DocRagIngestor.class.getName());
+    @Produces
+    @Named(EMBEDDING_MODEL_NAME) final EmbeddingModel embeddingModel = new AllMiniLmL6V2EmbeddingModel();
+    private final Path docsPath;
+    private final EmbeddingStore<TextSegment> embeddingStore;
 
     @Inject
-    public DocRagIngestor(@ConfigProperty(name = "app.docs-for-rag.dir") Path docs) {
-        this.docs = docs;
+    public DocRagIngestor(@ConfigProperty(name = "app.docs-for-rag.dir") Path docs,
+                          EmbeddingStore<TextSegment> embeddingStore) {
+        this.docsPath = docs;
+        this.embeddingStore = embeddingStore;
     }
 
     public void ingest(@Observes @Initialized(ApplicationScoped.class) Object pointless) {
+        LOGGER.log(System.Logger.Level.INFO, "DEMO ingesting documents from: {0}",
+                   docsPath.toAbsolutePath().normalize());
 
         long start = System.currentTimeMillis();
 
@@ -66,11 +70,12 @@ public class DocRagIngestor {
         List<Document> docs = loadDocs();
         ingestor.ingest(docs);
 
-        LOGGER.info(String.format("DEMO %d documents ingested in %d msec", docs.size(),
-                                  System.currentTimeMillis() - start));
+        LOGGER.log(System.Logger.Level.INFO, "DEMO {0} documents ingested in {1} msec",
+                   docs.size(),
+                   System.currentTimeMillis() - start);
     }
 
     private List<Document> loadDocs() {
-        return FileSystemDocumentLoader.loadDocuments(docs, new TextDocumentParser());
+        return FileSystemDocumentLoader.loadDocuments(docsPath, new TextDocumentParser());
     }
 }

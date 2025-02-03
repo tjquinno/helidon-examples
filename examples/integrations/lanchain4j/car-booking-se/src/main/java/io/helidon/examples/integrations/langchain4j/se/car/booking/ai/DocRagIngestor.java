@@ -35,6 +35,7 @@ import dev.langchain4j.store.embedding.EmbeddingStoreIngestor;
 
 @Service.Singleton
 public class DocRagIngestor {
+    private static final String EMBEDDING_MODEL_NAME = "all-mini-lm-l6-v2";
     private static final String CONFIG_KEY = "app.docs-for-rag.dir";
     private static final System.Logger LOGGER = System.getLogger(DocRagIngestor.class.getName());
 
@@ -44,7 +45,9 @@ public class DocRagIngestor {
     private final Path docsPath;
 
     @Service.Inject
-    DocRagIngestor(EmbeddingModel embeddingModel, EmbeddingStore<TextSegment> embeddingStore, Config config) {
+    DocRagIngestor(@Service.Named(EMBEDDING_MODEL_NAME) EmbeddingModel embeddingModel,
+                   EmbeddingStore<TextSegment> embeddingStore,
+                   Config config) {
         this.embeddingModel = embeddingModel;
         this.embeddingStore = embeddingStore;
 
@@ -80,7 +83,7 @@ public class DocRagIngestor {
     /**
      * This is the embedding model we want to use.
      */
-    @Service.Named("all-mini-lm-l6-v2")
+    @Service.Named(EMBEDDING_MODEL_NAME)
     @Service.Singleton
     static class EmbeddingModelFactory implements Supplier<EmbeddingModel> {
         @Override

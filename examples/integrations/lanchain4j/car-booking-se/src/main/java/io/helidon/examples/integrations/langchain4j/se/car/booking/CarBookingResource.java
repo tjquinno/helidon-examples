@@ -19,7 +19,6 @@ package io.helidon.examples.integrations.langchain4j.se.car.booking;
 import io.helidon.common.media.type.MediaTypes;
 import io.helidon.examples.integrations.langchain4j.se.car.booking.ai.ChatAiService;
 import io.helidon.examples.integrations.langchain4j.se.car.booking.ai.FraudAiService;
-import io.helidon.integrations.langchain4j.Ai;
 import io.helidon.service.registry.Service;
 import io.helidon.webserver.http.HttpRules;
 import io.helidon.webserver.http.HttpService;

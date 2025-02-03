@@ -29,7 +29,7 @@ import org.eclipse.microprofile.faulttolerance.Retry;
 import org.eclipse.microprofile.faulttolerance.Timeout;
 
 @Ai.Service
-@Ai.ChatMemory("fraudChatMemory")
+@Ai.ChatMemoryWindow(5)
 public interface FraudAiService {
 
     @SystemMessage("""

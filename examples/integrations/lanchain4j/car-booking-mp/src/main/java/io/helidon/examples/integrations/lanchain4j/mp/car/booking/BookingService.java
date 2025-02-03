@@ -25,12 +25,15 @@ import java.util.stream.Collectors;
 
 import io.helidon.examples.integrations.lanchain4j.mp.car.booking.model.Booking;
 import io.helidon.examples.integrations.lanchain4j.mp.car.booking.model.Customer;
+import io.helidon.integrations.langchain4j.Ai;
 import io.helidon.service.registry.Service;
 
 import dev.langchain4j.agent.tool.Tool;
 import jakarta.enterprise.context.ApplicationScoped;
 
-@Service.Singleton
+// this qualifier is required for beans providing tools
+@Ai.Tool
+@ApplicationScoped
 public class BookingService {
 
     private static final Logger LOGGER = Logger.getLogger(BookingService.class.getName());
